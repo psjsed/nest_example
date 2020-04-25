@@ -1,14 +1,25 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { CatsController } from './cats.controller'
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common'
+import { LoggerMiddleware } from './common/middleware/logger.middleware'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
+import { CatsModule } from './cats/cats.module'
+import { CatsController } from './cats/cats.controller'
 
 @Module({
-  imports: [],
-  controllers: [
-    AppController,
-    CatsController
+  imports: [
+    CatsModule
   ],
-  providers: [AppService],
+  controllers: [
+    AppController
+  ],
+  providers: [
+    AppService
+  ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes(CatsController)
+  }
+}
