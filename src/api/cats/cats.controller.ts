@@ -1,22 +1,24 @@
-import { Controller, Get, Req, Post, Put, HttpCode, Header, Redirect, Param, Body, HttpException, HttpStatus, UsePipes } from "@nestjs/common"
+import { Controller, Get, Req, Post, Put, HttpCode, Header, Redirect, Param, Body, HttpException, HttpStatus, UsePipes, UseGuards, SetMetadata } from "@nestjs/common"
 import { Request } from 'express'
 import { CreateCatDto } from "./dto/create-cat.dto"
 import { CatsService } from './cats.service'
 import { Cat } from './interface/cats.interface'
 import { JoiValidationPipe } from "src/pipe/validation/joi.validation.pipe"
 import { ValidationPipe } from "src/pipe/validation/validation.pipe"
+import { RolesGuard } from "src/common/guard/role.guard"
 
 @Controller('cats')
+@UseGuards(RolesGuard)
 export class CatsController {
   constructor(private readonly catsService: CatsService) {
 
   }
   @Get()
   async findAll(): Promise<Cat[]> {
-    throw new HttpException({
-      status: HttpStatus.FORBIDDEN,
-      error: 'This is a custom message'
-    }, HttpStatus.FORBIDDEN)
+    // throw new HttpException({
+    //   status: HttpStatus.FORBIDDEN,
+    //   error: 'This is a custom message'
+    // }, HttpStatus.FORBIDDEN)
     return this.catsService.findAll();
   }
 
@@ -38,6 +40,7 @@ export class CatsController {
     }
   
   @Post('dtoa')
+  @SetMetadata('roles', ['admin'])
   async createCat(@Body() createCatDto: CreateCatDto): Promise<string> {
     return 'Create cat!!!!, age: ' + createCatDto.age + ', name: ' + createCatDto.name + ', breed: ' + createCatDto.bread
   }

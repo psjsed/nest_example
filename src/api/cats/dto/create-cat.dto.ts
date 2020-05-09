@@ -1,4 +1,4 @@
-import {IsString, IsInt, MaxLength} from 'class-validator'
+import {IsString, IsInt, MaxLength, isDefined, IsEmpty, IsNotEmpty} from 'class-validator'
 export class CreateCatDto {
   @IsString()
   @MaxLength(5)
